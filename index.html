@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/index.css">
+    <title>Echarts - Map</title>
+</head>
+
+<body>
+    <div id="main"></div>
+</body>
+
+</html>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/echarts.min.js"></script>
+<script src="./js/map_config.js"></script>
+<script>
+    // import option from './js/map_config.js';
+    var uploadedDataURL = "/json/data-1553244225365-KkwiqpDmJ.json";
+    var mainMap = echarts.init(document.getElementById('main'));
+    // map跟随父元素自适应
+    var mapResize = function () {
+        setTimeout(() => {
+            window.onresize = function () {
+                mainMap.resize();
+            }
+        }, 200);
+    }
+    mainMap.showLoading();
+    $.getJSON(uploadedDataURL, function (geoJson) {
+        echarts.registerMap('guangdong', geoJson);
+        mainMap.hideLoading();
+        mainMap.setOption(option);
+        mapResize();
+    });
+    // 点击事件监听
+    mainMap.on('click', function (e) {
+        console.log(e);
+    });
+    // 缩放事件监听
+    mainMap.on('georoam', function (e) {
+        if (e.dx || e.dy) return; // 过滤拖拽
+        if (e.zoom > 1) {
+            console.log('放大...');
+        } else {
+            if (e.dx || e.dy) return; // 有时候会抽风 需要再次过滤一下这个
+            console.log('地图缩小了');
+        }
+    });
+</script>
